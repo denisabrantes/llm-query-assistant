@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import requests
-sys.path.append("./experiment")
 
 import glob
 import torch
