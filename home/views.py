@@ -7,9 +7,14 @@ import glob
 import torch
 import transformers 
 from transformers import AutoTokenizer
-from chat_format import ASSISTANT_PROMPT, EOS_TOKEN, get_chat_format
-from dataset_utils import load_or_create_dataset
-from finetune import get_model_and_tokenizer
+
+sys.path.append("./experiment")
+
+from experiment.chat_format import ASSISTANT_PROMPT as ASSISTANT_PROMPT
+from experiment.chat_format import EOS_TOKEN as EOS_TOKEN
+from experiment.chat_format import get_chat_format as get_chat_format
+from experiment.dataset_utils import load_or_create_dataset as load_or_create_dataset
+from experiment.finetune import get_model_and_tokenizer as get_model_and_tokenizer
 
 # Import MLDE packages
 from determined.experimental import client as det
