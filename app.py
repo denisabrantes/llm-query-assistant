@@ -1,3 +1,5 @@
+import sys
+sys.path.append("./home/experiment")
 from flask import Flask, Blueprint, render_template, jsonify,  request
 from home import home_bp
 
