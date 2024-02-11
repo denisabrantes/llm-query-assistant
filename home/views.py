@@ -33,7 +33,7 @@ ip_address = "34.28.215.5"
 
 @home_bp.route('/')
 def index():
-    print("--> Loading Home Page")
+    #print("--> Loading Home Page", flush=True)
     return render_template('/home.html', hostname = ip_address, port = 8080)
 
 
@@ -63,7 +63,7 @@ def load_model():
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         pipeline = transformers.pipeline(
             "text-generation",
-            model=model,
+            model=model_name,
             torch_dtype=torch.float16,
             device_map="auto"
         )
