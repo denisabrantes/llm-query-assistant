@@ -333,6 +333,7 @@
             request.setRequestHeader("Content-type", "application/json");
             request.send();
             request.onload = () => {
+                console.log("--> Response: " + request.response);
                 var responseMsg = JSON.parse(request.response);
                 var htmlcontent = "";
                 if (responseMsg.length === 0) {
