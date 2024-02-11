@@ -27,7 +27,7 @@ import google.auth.transport.requests
 
 from . import home_bp
 
-pipeline, tokenizer = None, None
+pipeline, tokenizer, models, datasets = None, None, None, None
 
 
 @home_bp.route('/')
@@ -77,8 +77,35 @@ def connect():
     try:
         tokenizer, pipeline = load_model(model_name)
         response_msg = {'message': 'Connection Successful' }
-        return Response(str(response_msg), status=200, mimetype='application/json')        
+        return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
         response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}" }
+        return Response(str(response_msg), status=500, mimetype='application/json')
+
+
+
+@home_bp.route('/list_models', methods=['GET'])
+def connect():
+    global models
+    
+    try:
+        f = open('models.json')
+        models = json.load(f)
+        return Response(str(models), status=200, mimetype='application/json')
+    except Exception as ex:
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}" }
+        return Response(str(response_msg), status=500, mimetype='application/json')
+
+
+@home_bp.route('/list_datasets', methods=['GET'])
+def connect():
+    global datasets
+    
+    try:
+        f = open('datasets.json')
+        datasets = json.load(f)
+        return Response(str(datasets), status=200, mimetype='application/json')
+    except Exception as ex:
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}" }
         return Response(str(response_msg), status=500, mimetype='application/json')
 
