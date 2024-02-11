@@ -55,11 +55,12 @@ def execute_query():
 
 
 @home_bp.route('/load_model', methods=['POST'])
-def load_model(model):
+def load_model():
     global pipeline
-    global tokenizer    
+    global tokenizer  
+    model_name = request.values.get('model_name')  
     try:
-        tokenizer = AutoTokenizer.from_pretrained(model)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
         pipeline = transformers.pipeline(
             "text-generation",
             model=model,

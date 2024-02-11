@@ -409,25 +409,27 @@
             var model_name = e.value;
             console.log("--> Loading Model: " + model_name);
 
+            var data = 'model_name=' + model_name;
+
             // Show Loading Panel
             $("#loading_model").show();
 
             let request = new XMLHttpRequest();
             request.open("POST", "http://{{hostname}}:{{port}}/load_model");
-            request.setRequestHeader("Content-type", "application/json");
-            request.send();
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(data);
             request.onload = () => {
                 var response = request.response;
-                var payload = response.replace(/'/g, '"')
-                console.log("--> Response: " + payload);                
-                var responseMsg = JSON.parse(payload);
+                var payloadr = response.replace(/'/g, '"')
+                console.log("--> Response: " + payloadr);
+                var responseMsg = JSON.parse(payloadr);
                 var htmlcontent = "";
                 if (responseMsg.length === 0) {
                     htmlcontent += "No Datasets Found";
                 }
                 else {
                     htmlcontent += "<select id='dataset' name='dataset' class='form-control'> \n";
-                    for (var x = 0; x < responseMsg.length; x++) 
+                    for (var x = 0; x < responseMsg.length; x++)
                     {
                         var thisDS = responseMsg[x];
                         htmlcontent += "  <option value='" + thisDS.name +  "'>" + thisDS.name + " </option> \n";
