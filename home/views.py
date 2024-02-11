@@ -36,7 +36,7 @@ ip_address = socket.gethostbyname(hostname)
 @home_bp.route('/')
 def index():
     print("--> Loading Home Page")
-    return render_template('/home.html', hostname = hostname, port = 8080)
+    return render_template('/home.html', hostname = ip_address, port = 8080)
 
 
 @home_bp.route('/execute_query', methods=['POST'])
