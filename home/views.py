@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import socket
 import requests
 
 import glob
@@ -29,11 +30,13 @@ from . import home_bp
 
 pipeline, tokenizer, models, datasets = None, None, None, None
 
+hostname = socket.gethostname()
+ip_address = socket.gethostbyname(hostname)
 
 @home_bp.route('/')
 def index():
     print("--> Loading Home Page")
-    return render_template('/home.html')
+    return render_template('/home.html', hostname = hostname, port = 8080)
 
 
 @home_bp.route('/execute_query', methods=['POST'])
