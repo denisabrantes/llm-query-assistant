@@ -130,7 +130,7 @@
                                             <div class="form-group row">
                                                 <label for="password" class="col-lg-3 col-form-label">Your Question</label>
                                                 <div class="col-lg-9">
-                                                    <input id="question" name="question" type="text" class="form-control" value="Enter your question here">
+                                                    <input id="question" name="question" type="text" class="form-control" placeholder="Enter your question here">
                                                 </div>
                                             </div><!--end form-group-->
                                         </div><!--end col-->
@@ -152,129 +152,34 @@
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Register a new model</h4>
-                                    <p class="text-muted mb-0">Lazy dev did not build any validation. Make sure all inputs are correct</p>
+                                    <h4 class="card-title">Prompt and Response</h4>
+                                    <p class="text-muted mb-0">Evaluate the prompt generated for the model and see the generated response.</p>
                                 </div><!--end card-header-->
                                 <div class="card-body">
                                     <form id="form-model" class="form-horizontal">
-                                        <h3>Model Details</h3>
                                         <fieldset>
                                             <div class="row" style="display:flex;">
                                                 <div class="col-md-6"> <!-- first column -->
                                                     <div class="row">
                                                         <div class="form-group row col-md-9">
-                                                            <label for="model_name" class="col-lg-3 col-form-label">Model Name</label>
                                                             <div class="col-lg-9">
-                                                                <input id="model_name" name="model_name" type="text" class="form-control">
+                                                                <label for="prompt" class="form-label">The Prompt</label>
+                                                                <textarea id="prompt" name="prompt" type="textarea" class="form-control"></textarea>
                                                             </div>
                                                         </div><!--end form-group-->
                                                     </div>
+                                                </div> <!--end of first column-->
+                                                <div class="col-md-6"> <!-- first column -->
                                                     <div class="row">
                                                         <div class="form-group row col-md-9">
-                                                            <label for="input_type" class="col-lg-3 col-form-label">Input Type</label>
                                                             <div class="col-lg-9">
-                                                                <select id="input_type" name="input_type" class="form-control">
-                                                                    <option value="NONE">--Please Select--</option>
-                                                                    <option value="Tabular">Tabular</option>
-                                                                    <!--<option value="CV">Computer Vision</option>-->
-                                                                    <option value="NLP">NLP</option>
-                                                                </select>
+                                                                <label for="answer" class="form-label">The Answer:</label>
+                                                                <textarea id="answer" name="answer" type="textarea" class="form-control"></textarea>
                                                             </div>
                                                         </div><!--end form-group-->
-                                                    </div><!--end row-->
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="model_output" class="col-lg-3 col-form-label">Output Type</label>
-                                                            <div class="col-lg-9">
-                                                                <select id="model_output" name="model_output" class="form-control">
-                                                                    <option value="NONE">--Please Select--</option>
-                                                                    <option value="Multiclass">Multiclass</option>
-                                                                    <option value="Multilabel">Multilabel</option>
-                                                                    <option value="ObjectDetection">Object Detection</option>
-                                                                    <option value="Regression">Regression</option>
-                                                                </select>
-                                                            </div>
-                                                        </div><!--end form-group-->
-                                                    </div><!--end row-->
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="none" class="col-lg-3 col-form-label">Reference Dataset</label>
-                                                            <div class="col-lg-9 form-description">
-                                                                <span>
-                                                                    Your reference data set must be a CSV file that contains all attributes (input and non-input).<br/>
-                                                                    All prediction fields MUST be named with the 'pred_' prefix <br/>
-                                                                    All ground truth fields MUST be named with the 'gt_' prefix <br/>
-                                                                    Other than the prefix, the prediction and ground truth fields must have the same name. <br/>
-                                                                    Example: "pred_risk" and "gt_risk"
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div><!--end row-->
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="reference_file" class="col-lg-3 col-form-label">Reference CSV File</label>
-                                                            <div class="col-lg-9">
-                                                                <input type="file" id="csvfile" name="csvfile" class="dropify" /> 
-                                                            </div>
-                                                        </div><!--end form-group-->
-                                                    </div><!--end row-->
-
+                                                    </div>
                                                 </div> <!--end of first column-->
 
-                                                <div class="col-md-6"> <!-- second column -->
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="requirements-txt" class="col-lg-3 col-form-label">Model Type</label>
-                                                            <div class="col-lg-9">
-                                                                <div class="form-check-inline my-1">
-                                                                    <div class="custom-control custom-radio">
-                                                                        <input type="radio" id="model_type1" name="model_type" value="Streaming" class="custom-control-input">
-                                                                        <label class="custom-control-label" for="model_type1">Streaming</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-check-inline my-1">
-                                                                    <div class="custom-control custom-radio">
-                                                                        <input type="radio" id="model_type2" name="model_type" value="Batch" class="custom-control-input" checked>
-                                                                        <label class="custom-control-label" for="model_type2">Batch</label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div><!--end form-group-->
-                                                    </div>
-                                                      
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="explain_file_desc" class="col-lg-3 col-form-label">
-                                                                <input type="checkbox" id="explainability" name="explainability" value="enabled">
-                                                                Enable Explainability?</label>
-                                                            <div class="col-lg-9 form-description">
-                                                                <span>
-                                                                    The Zip file should contain all necessary assets to enable explainability<br/>
-                                                                    The requirements.txt file (must have this name). <br/>
-                                                                    The entrypoint.py file. (must have this name) <br/>
-                                                                    The serialized model (to be loaded by the entrypoint file) <br/>
-                                                                    Any additional files required to run the model.
-                                                                </span>
-                                                            </div>
-                                                        </div><!--end form-group-->
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="explain_file" class="col-lg-3 col-form-label">Upload Explainability Zip File</label>
-                                                            <div class="col-lg-9">
-                                                                <input type="file" id="zipfile" name="zipfile" class="dropify"/> 
-                                                            </div>
-                                                        </div><!--end form-group-->
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="form-group row col-md-9">
-                                                            <label for="none" class="col-lg-3 col-form-label">Validate Model Data</label>
-                                                            <div class="col-lg-9">
-                                                                <button type="button" class="btn btn-primary waves-effect waves-light" onClick="javascript:validateModelData();">Validate</button>
-                                                            </div>
-                                                        </div><!--end form-group-->
-                                                    </div>                                                    
-                                                </div> <!--end of second column-->
                                             </div><!--end row-->
                                         </fieldset><!--end fieldset-->
 
@@ -421,7 +326,6 @@
 
         }
 
-
         function load_model() {
             var e = document.getElementById("model");
             var model_name = e.value;
@@ -451,7 +355,6 @@
                 update_modelstatus(modelLooaded);
             }
         }
-
 
         function submitQuestion() {
             var e = document.getElementById("question");
