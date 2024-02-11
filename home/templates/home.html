@@ -423,25 +423,9 @@
                 var payloadr = response.replace(/'/g, '"')
                 console.log("--> Response: " + payloadr);
                 var responseMsg = JSON.parse(payloadr);
-                var htmlcontent = "";
-                if (responseMsg.length === 0) {
-                    htmlcontent += "No Datasets Found";
-                }
-                else {
-                    htmlcontent += "<select id='dataset' name='dataset' class='form-control'> \n";
-                    for (var x = 0; x < responseMsg.length; x++)
-                    {
-                        var thisDS = responseMsg[x];
-                        htmlcontent += "  <option value='" + thisDS.name +  "'>" + thisDS.name + " </option> \n";
-                    }
-                    htmlcontent += "</select> \n";                    
-                }
-                document.getElementById("dataset_list_select_div").innerHTML = htmlcontent;
+                 // Hide Loading Panel
+                $("#loading_model").hide(); 
             }
-
-            // Hide Loading Panel
-            $("#loading_dataset_list").hide();            
-
         }
 
 
