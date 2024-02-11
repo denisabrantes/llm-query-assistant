@@ -85,7 +85,7 @@ def connect():
 
 
 @home_bp.route('/list_models', methods=['GET'])
-def connect():
+def list_models():
     global models
     
     try:
@@ -98,7 +98,7 @@ def connect():
 
 
 @home_bp.route('/list_datasets', methods=['GET'])
-def connect():
+def list_datasets():
     global datasets
     
     try:
