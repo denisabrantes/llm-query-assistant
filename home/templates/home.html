@@ -445,7 +445,10 @@
                  // Hide Loading Panel
                 $("#loading_model").hide();
                 var model_status = responseMsg["model_status"];
-                update_modelstatus(model_status);
+                console.log("--> Model Status: " + model_status)
+                if (model_status == "loaded") { modelLoaded = true; }
+                else { modelLooaded = false; }
+                update_modelstatus(modelLooaded);
             }
         }
 
