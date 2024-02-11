@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import socket
 import requests
 
 import glob
@@ -30,8 +29,7 @@ from . import home_bp
 
 pipeline, tokenizer, models, datasets = None, None, None, None
 
-hostname = socket.gethostname()
-ip_address = socket.gethostbyname(hostname)
+ip_address = !curl ifconfig.me
 
 @home_bp.route('/')
 def index():
