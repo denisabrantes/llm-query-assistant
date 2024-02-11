@@ -355,23 +355,26 @@
             request.send();
             request.onload = () => {
                 var response = request.response;
-                var payload = response.replace(/'/g, '"')
+                var payload = response.replace(/'/g, '"');
                 console.log("--> Response: " + payload);
                 var responseMsg = JSON.parse(payload);
+                model_list = responseMsg["models"];
                 var htmlcontent = "";
-                if (responseMsg.length === 0) {
+                if (model_list.length === 0) {
                     htmlcontent += "No Models Found";
                 }
                 else {
                     htmlcontent += "<select id='model' name='model' class='form-control'> \n";
-                    for (var x = 0; x < responseMsg.length; x++) 
+                    for (var x = 0; x < model_list.length; x++) 
                     {
-                        var thisModel = responseMsg[x];
+                        var thisModel = model_list[x];
                         htmlcontent += "  <option value='" + thisModel.name +  "'>" + thisModel.name + " </option> \n";
                     }
                     htmlcontent += "</select> \n";                    
                 }
                 document.getElementById("model_list_select_div").innerHTML = htmlcontent;
+                var model_status = responseMsg["model_status"];
+                update_modelstatus(model_status);
             }
 
             // Hide Loading Panel
