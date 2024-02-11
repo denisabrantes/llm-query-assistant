@@ -109,15 +109,20 @@
                                         </div><!--end col-->                                        
                                     </div><!--end row-->                                            
                                     <div class="row">
-                                        <div class="col-md-11">
+                                        <div class="col-md-8">
                                             <div class="form-group row">
                                                 <label for="login" class="col-lg-3 col-form-label">Choose Dataset</label>
                                                 <div class="col-lg-9" id="dataset_list_select_div"></div>
                                             </div><!--end form-group-->
                                         </div><!--end col-->
+                                        <div class="col-md-4">
+                                            <div class="col-auto">
+                                               &nbsp;
+                                            </div><!--end form-group-->
+                                        </div><!--end col-->                                            
                                     </div><!--end row-->
                                     <div class="row">
-                                        <div class="col-md-11">
+                                        <div class="col-md-8">
                                             <div class="form-group row">
                                                 <label for="password" class="col-lg-3 col-form-label">Your Question</label>
                                                 <div class="col-lg-9">
@@ -125,12 +130,12 @@
                                                 </div>
                                             </div><!--end form-group-->
                                         </div><!--end col-->
-                                    </div><!--end row-->                                        
-                                    <div class="row">
-                                        <div class="col-auto">
-                                            <button type="button" class="btn btn-sm btn-primary px-3" onClick="javascript:connect();">Ask</button>
-                                        </div>
-                                    </div><!--end row--> 
+                                        <div class="col-md-4">
+                                            <div class="col-auto">
+                                                <button type="button" class="btn btn-sm btn-primary px-3" onClick="javascript:submitQuestion();">Ask</button>
+                                            </div><!--end form-group-->
+                                        </div><!--end col-->
+                                    </div><!--end row-->
                                 </fieldset>
 
                                 </div><!--end card-body-->                                
@@ -438,6 +443,45 @@
         }
 
 
+        function submitQuestion() {
+            var e = document.getElementById("question");
+            var question = e.value;
+            console.log("--> Asking Question: " + question);
+
+            // Show Loading Panel
+            $("#loading_model").show();
+
+            let request = new XMLHttpRequest();
+            request.open("POST", "http://{{hostname}}:{{port}}/load_model");
+            request.setRequestHeader("Content-type", "application/json");
+            request.send();
+            request.onload = () => {
+                var response = request.response;
+                var payload = response.replace(/'/g, '"')
+                console.log("--> Response: " + payload);                
+                var responseMsg = JSON.parse(payload);
+                var htmlcontent = "";
+                if (responseMsg.length === 0) {
+                    htmlcontent += "No Datasets Found";
+                }
+                else {
+                    htmlcontent += "<select id='dataset' name='dataset' class='form-control'> \n";
+                    for (var x = 0; x < responseMsg.length; x++) 
+                    {
+                        var thisDS = responseMsg[x];
+                        htmlcontent += "  <option value='" + thisDS.name +  "'>" + thisDS.name + " </option> \n";
+                    }
+                    htmlcontent += "</select> \n";                    
+                }
+                document.getElementById("dataset_list_select_div").innerHTML = htmlcontent;
+            }
+
+            // Hide Loading Panel
+            $("#loading_dataset_list").hide();            
+
+        }
+
+        
 
 
 
