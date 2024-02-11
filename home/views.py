@@ -29,7 +29,7 @@ from . import home_bp
 
 pipeline, tokenizer, models, datasets = None, None, None, None
 
-ip_address = !curl ifconfig.me
+ip_address = "34.122.39.210"
 
 @home_bp.route('/')
 def index():
