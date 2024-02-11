@@ -333,8 +333,10 @@
             request.setRequestHeader("Content-type", "application/json");
             request.send();
             request.onload = () => {
-                console.log("--> Response: " + request.response);
-                var responseMsg = JSON.parse(request.response);
+                response = request.response;
+                payload = response.replace(/'/g, '"')
+                console.log("--> Response: " + payload);
+                var responseMsg = JSON.parse(payload);
                 var htmlcontent = "";
                 if (responseMsg.length === 0) {
                     htmlcontent += "No Models Found";
