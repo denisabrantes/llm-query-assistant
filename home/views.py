@@ -80,12 +80,10 @@ def load_model():
             torch_dtype=torch.float16,
             device_map="auto"
         )
-        model_status = "loaded"
-        response_msg = {'message': "Model Loaded Successfully", "model_status" : model_status }
+        response_msg = {'message': "Model Loaded Successfully", "model_status" : "loaded" }
         return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
-        model_status = "not_loaded"
-        response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}", "model_status" : model_status }
+        response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}", "model_status" : "not_loaded" }
         return Response(str(response_msg), status=500, mimetype='application/json')
 
 
