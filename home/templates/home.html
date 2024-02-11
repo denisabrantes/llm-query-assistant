@@ -106,7 +106,7 @@
                                     <div class="row">
                                         <div class="col-md-11">
                                             <div class="form-group row">
-                                                <label for="login" class="col-lg-3 col-form-label">Login</label>
+                                                <label for="login" class="col-lg-3 col-form-label">Choose Dataset</label>
                                                 <div class="col-lg-9" id="dataset_list_select_div"></div>
                                             </div><!--end form-group-->
                                         </div><!--end col-->
@@ -368,7 +368,10 @@
             request.setRequestHeader("Content-type", "application/json");
             request.send();
             request.onload = () => {
-                var responseMsg = JSON.parse(request.response);
+                response = request.response;
+                payload = response.replace(/'/g, '"')
+                console.log("--> Response: " + payload);                
+                var responseMsg = JSON.parse(payload);
                 var htmlcontent = "";
                 if (responseMsg.length === 0) {
                     htmlcontent += "No Datasets Found";
