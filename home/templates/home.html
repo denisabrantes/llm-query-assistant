@@ -325,7 +325,7 @@
             update_modelstatus();
         });   
 
-        function update_modelstatus() {
+        function update_modelstatus(modelLooaded) {
             if(modelLoaded) { document.getElementById("modelstatus").innerHTML = model_loaded; }
             else {document.getElementById("modelstatus").innerHTML = model_notloaded; }
         }
@@ -374,9 +374,10 @@
                 }
                 document.getElementById("model_list_select_div").innerHTML = htmlcontent;
                 var model_status = responseMsg["model_status"];
+                console.log("--> Model Status: " + model_status)
                 if (model_status == "loaded") { modelLoaded = true; }
                 else { modelLooaded = false; }
-                update_modelstatus();
+                update_modelstatus(modelLooaded);
             }
 
             // Hide Loading Panel
