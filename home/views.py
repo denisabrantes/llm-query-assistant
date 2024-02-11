@@ -54,35 +54,28 @@ def execute_query():
     return Response(str(response_msg), status=200, mimetype='application/json')
 
 
+@home_bp.route('/load_model', methods=['POST'])
 def load_model(model):
-    tokenizer = AutoTokenizer.from_pretrained(model)
-
-    pipeline = transformers.pipeline(
-        "text-generation",
-        model=model,
-        torch_dtype=torch.float16,
-        device_map="auto"
-    )
-
-    return tokenizer, pipeline
-
-
-
-@home_bp.route('/connect', methods=['POST'])
-def connect():
     global pipeline
-    global tokenizer
-    
-    model_name = ""
-
+    global tokenizer    
     try:
-        tokenizer, pipeline = load_model(model_name)
-        response_msg = {'message': 'Connection Successful' }
+        tokenizer = AutoTokenizer.from_pretrained(model)
+        pipeline = transformers.pipeline(
+            "text-generation",
+            model=model,
+            torch_dtype=torch.float16,
+            device_map="auto"
+        )
+        response_msg = {'message': 'Model Loaded Successfully' }
         return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
         response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}" }
         return Response(str(response_msg), status=500, mimetype='application/json')
 
+
+@home_bp.route('/connect', methods=['POST'])
+def connect():
+    return Response("Connected!", status=200, mimetype='application/json')
 
 
 @home_bp.route('/list_models', methods=['GET'])

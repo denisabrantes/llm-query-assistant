@@ -71,7 +71,7 @@
                                     <h4 class="page-title">Text-To-SQL Assistant</h4>
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="javascript:void(0);">Home</a></li>
-                                        <li class="breadcrumb-item active">Login</li>
+                                        <li class="breadcrumb-item active">Chat</li>
                                     </ol>
                                 </div><!--end col-->
                             </div><!--end row-->                                                              
@@ -86,7 +86,7 @@
                             <div class="card-header">
                                 <div class="row align-items-center">
                                     <div class="col">                      
-                                        <h4 class="card-title">Your SQL Assistant</h4>                   
+                                        <h4 class="card-title">Model & Dataset Configuration</h4>                   
                                     </div><!--end col-->  
                                     <div class="col-auto">             
                                     </div><!--end col-->                                      
@@ -96,12 +96,17 @@
 
                                 <fieldset id="form-horizontal-p-0" role="tabpanel" aria-labelledby="form-horizontal-h-0" class="body current" aria-hidden="false">
                                     <div class="row">
-                                        <div class="col-md-11">
+                                        <div class="col-md-8">
                                             <div class="form-group row">
                                                 <label for="serverurl" class="col-lg-3 col-form-label">Choose Model</label>
                                                 <div class="col-lg-9" id="model_list_select_div"></div>
                                             </div><!--end form-group-->
                                         </div><!--end col-->
+                                        <div class="col-md-4">
+                                            <div class="col-auto">
+                                                <button type="button" class="btn btn-sm btn-primary px-3" onClick="javascript:load_model();">Load Model</button>
+                                            </div><!--end form-group-->
+                                        </div><!--end col-->                                        
                                     </div><!--end row-->                                            
                                     <div class="row">
                                         <div class="col-md-11">
@@ -333,8 +338,8 @@
             request.setRequestHeader("Content-type", "application/json");
             request.send();
             request.onload = () => {
-                response = request.response;
-                payload = response.replace(/'/g, '"')
+                var response = request.response;
+                var payload = response.replace(/'/g, '"')
                 console.log("--> Response: " + payload);
                 var responseMsg = JSON.parse(payload);
                 var htmlcontent = "";
@@ -368,8 +373,47 @@
             request.setRequestHeader("Content-type", "application/json");
             request.send();
             request.onload = () => {
-                response = request.response;
-                payload = response.replace(/'/g, '"')
+                var response = request.response;
+                var payload = response.replace(/'/g, '"')
+                console.log("--> Response: " + payload);                
+                var responseMsg = JSON.parse(payload);
+                var htmlcontent = "";
+                if (responseMsg.length === 0) {
+                    htmlcontent += "No Datasets Found";
+                }
+                else {
+                    htmlcontent += "<select id='dataset' name='dataset' class='form-control'> \n";
+                    for (var x = 0; x < responseMsg.length; x++) 
+                    {
+                        var thisDS = responseMsg[x];
+                        htmlcontent += "  <option value='" + thisDS.name +  "'>" + thisDS.name + " </option> \n";
+                    }
+                    htmlcontent += "</select> \n";                    
+                }
+                document.getElementById("dataset_list_select_div").innerHTML = htmlcontent;
+            }
+
+            // Hide Loading Panel
+            $("#loading_dataset_list").hide();            
+
+        }
+
+
+        function load_model() {
+            var e = document.getElementById("model");
+            var model_name = e.value;
+            console.log("--> Loading Model: " + model_name);
+
+            // Show Loading Panel
+            $("#loading_model").show();
+
+            let request = new XMLHttpRequest();
+            request.open("POST", "http://{{hostname}}:{{port}}/load_model");
+            request.setRequestHeader("Content-type", "application/json");
+            request.send();
+            request.onload = () => {
+                var response = request.response;
+                var payload = response.replace(/'/g, '"')
                 console.log("--> Response: " + payload);                
                 var responseMsg = JSON.parse(payload);
                 var htmlcontent = "";
@@ -395,234 +439,6 @@
 
 
 
-
-
-        function validateModelData() {
-            // send the entire form, see what happens
-            // form-model
-            console.log("Validating Model");
-            var data = new FormData(jQuery('form')[0]);
-
-            /*
-            jQuery.each(jQuery('#file')[0].files, function(i, file) {
-                data.append('files[]', file);
-            });
-            */
-
-            $.ajax({
-                    url: 'http://{{hostname}}:{{port}}/validate', 
-                    type: 'POST',
-                    data: data,
-                    processData: false,
-                    contentType: false
-                }).done(function(data){
-                    //console.log("Success Response: " + data);
-                    response_data = JSON.parse(data);
-                    globalThis.model_attributes = response_data.data;
-                    globalThis.model_data = response_data.model_data
-                    console.log("response status: ", response_data.status)
-                    renderAttributeList(response_data.data);
-
-                }).fail(function(data){
-                    console.log("Fail Response: " + data);
-            });
-        }
-
-        function renderAttributeList(data) {
-
-            // CREATE TABLE WITH MODEL ATTRIBUTES
-            // Model Validation Fields
-            var model_name = $("#model_name").val();
-            $("#model_name_valid").html(model_name);
-            var model_type_valid = $('input[name="model_type"]:checked').val();
-            $("#model_type_valid").html(model_type_valid);
-            var input_type_valid = $("#input_type").val();
-            var input_type = $("#input_type").val();
-            $("#input_type_valid").html(input_type);
-            var output_type = $("#model_output").val();
-            $("#output_type_valid").html(output_type);            
-
-
-            //attribute_list
-            var htmlcontent = "";
-            htmlcontent += "<table id='review_table' class='table table-striped  mb-0'> \n";
-            htmlcontent += "    <thead> \n";
-            htmlcontent += "        <tr> \n";
-            htmlcontent += "            <th>Delete</th> \n";
-            htmlcontent += "            <th>Name</th> \n";
-            htmlcontent += "            <th>Type</th> \n";
-            htmlcontent += "            <th>Stage</th> \n";
-            htmlcontent += "            <th>Monitor for Bias</th> \n";
-            htmlcontent += "        </tr> \n";
-            htmlcontent += "    </thead> \n";
-            htmlcontent += "    <tbody> \n";
-
-            for (var x = 0; x < data.length; x++) 
-            {
-                var thisAttr = data[x];
-                htmlcontent += "        <tr> \n";
-                htmlcontent += "            <td class='col-1'> <button type='button' class='btn btn-sm btn-soft-danger btn-circle' onclick=\"removeAttr('"+ thisAttr.name + "');\"> \n";
-                htmlcontent += "            <i class='dripicons-trash' aria-hidden='true'></i></button> </td> \n";
-                htmlcontent += "            <td class='col-2'> " + thisAttr.name +  " </td> \n";
-                htmlcontent += "            <td class='col-2'> " + thisAttr.type + " </td> \n";
-                htmlcontent += "            <td class='col-3'>  \n";
-                var select_stage = "stage_" + thisAttr.name;
-                htmlcontent += "                <select id='" + select_stage + "' name='" + select_stage + "' class='form-control' style='max-width: 200px;'>  \n";
-                htmlcontent += "                     <option value='" + thisAttr.stage + "' selected>" + thisAttr.stage +"</option> \n";
-                htmlcontent += "                     <option value='Input'>Input</option><option value='NonInput'>Non-Input</option> \n";
-                htmlcontent += "                     <option value='Prediction'>Prediction</option><option value='GroundTruth'>Ground Truth</option>\n";
-                htmlcontent += "            </td> \n";
-                htmlcontent += "            <td class='col-4' style='display: flex;'> \n";
-                if (thisAttr.stage === "Input" || thisAttr.stage === "NonInput") {
-                    htmlcontent += "            <div class='col-6'><input type='checkbox' id='bias_" + thisAttr.name +"' onclick=\"enableBins('"+ thisAttr.name + "');\"> \n";
-                    htmlcontent += "            Yes </input> </div> \n";
-                }
-                if (thisAttr.stage === "Prediction") {
-                    htmlcontent += "            <div class='col-9'><input type='checkbox' id='positive_" + thisAttr.name +"' \"> \n";
-                    htmlcontent += "            Positive Prediction </input> </div> \n";
-                }                
-                if (thisAttr.type == 'int64' && thisAttr.valcount > 20 && (thisAttr.stage === "Input" || thisAttr.stage === "NonInput")) {
-                    htmlcontent += "        <div class='col-6' id='bins_" + thisAttr.name +"' style='display:flex;opacity: 0;'>      \n";
-                    htmlcontent += "            <div style='margin-left:10px;display:flex;'> Bins: </div> <div style='margin-left:10px;display:flex;'>     \n";
-                    htmlcontent += "            <input type='text' id='bucket_" + thisAttr.name + "' class='form-control' style='width:200px;height:28px;' value=\"[None, 10, 100, None]\"/> \n";
-                    htmlcontent += "            </div>      \n";
-                    htmlcontent += "        </div>      \n";
-                }
-                htmlcontent += "              </div>\n";
-                htmlcontent += "            </td> \n";
-                htmlcontent += "        </tr> \n";
-            }
-            htmlcontent += "            </tbody> \n";
-            htmlcontent += "        </table> \n";
-            htmlcontent += "    </div> \n";
-            htmlcontent += "</div> \n";
-        
-            document.getElementById("attribute_list").innerHTML = htmlcontent;
-            $("#registerpanel").hide();
-            $("#reviewpanel").show();                      
-        }
-
-        function removeAttr(name) {
-
-            attr_list = globalThis.model_attributes;
-            console.log("Removing attribute: " + name);
-            console.log("thisAttr1: " + JSON.stringify(attr_list[0]));
-
-            // remove attribute
-            for (var x = 0; x < attr_list.length; x++) {
-                var thisAttr = attr_list[x];
-                if (thisAttr.name === name) {
-                    attr_list.splice(x, 1);
-                    document.getElementById("review_table").deleteRow(1+x);
-                }
-            }
-
-            console.log("Removed Attribute: " + name);
-            console.log("Attribute List: " + JSON.stringify(attr_list));
-            globalThis.model_attributes = attr_list;
-        
-        }
-
-        function enableBins(attr_name) {
-            divname = "#bins_" + attr_name;
-            console.log("Attr: " + attr_name + "  | Bin: " + divname);
-            $(divname).css({opacity: 100});
-        }
-
-        function wizardBack() {
-            $("#registerpanel").show();
-            $("#reviewpanel").hide();              
-        }
-        
-        function saveModel() {
-            // Step 1 - Collect all the data
-            attr_list = globalThis.model_attributes;
-            var updated_attr_list = [];
-            for (var x = 0; x < attr_list.length; x++) {
-                var thisAttr = attr_list[x];
-                // Check if Bias is checked
-                bias_field = "#bias_" + thisAttr.name;
-                if($(bias_field).is(':checked')) {
-                    thisAttr.bias = 1;
-                    bins_field = "#bucket_" + thisAttr.name;
-                    if($(bins_field).val()) {
-                        thisAttr.bins = $(bins_field).val();
-                    }
-                }
-                if (thisAttr.name.substring(0,4) === "PRED") {
-                    positive_field = "#positive_" + thisAttr.name;
-                    if($(positive_field).is(':checked')) {
-                        thisAttr.positive = 1;
-                    } else { thisAttr.positive = 0; }
-                }
-                updated_attr_list.push(thisAttr);
-            }            
-
-            // Step - Show Loading Panel
-            $("#save_loading").show();
-            
-
-            // Prepare data to send
-            var save_data = { 'model_data' : globalThis.model_data, 'model_attributes' : updated_attr_list};
-
-            // Step 2 - Send Data to Server to Save Model
-            $.ajax({
-                url : 'http://{{hostname}}:{{port}}/save',
-                type: 'POST',
-                data: JSON.stringify(save_data),
-                contentType: 'application/json; charset=utf-8',
-                dataType   : 'json',
-                success    : function(data){
-                    console.log("---> Model Saved with ID: " + data.model_id);
-                    $("#save_loading").hide();
-                    if(data.explainability == "enabled") {
-                        $("#confirmation_model_id").html(data.model_id);
-                        startTimer(120, "#pre_explain_counter", enableExplainability);
-                        $("#save_complete").show();
-                    }
-                    else {
-                        $("#process_complete").show();
-                    }
-
-                }
-            });            
-        }
-
-
-
-        function startTimer(duration, divname, cb) {
-            var timer = duration, minutes, seconds;
-            setInterval(function () {
-                minutes = parseInt(timer / 60, 10)
-                seconds = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                $(divname).html(minutes + ":" + seconds);
-
-                if (--timer < 0) {
-                    clearInterval(__timer);
-                    timer = duration;
-                }
-                // callback execution
-                cb();
-            }, 1000);
-        }
-
-
-
-        function enableExplainability() {
-            $("#save_complete").hide();
-            $("#expl_loading").show();
-            startTimer(60*15, "#explain_counter", completeSaveProcess);
-        }
-
-
-        function completeSaveProcess() {
-            $("#expl_loading").hide();
-            $("#process_complete").show();            
-        }
 
 
         // dropify js        
