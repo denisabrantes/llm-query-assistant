@@ -34,7 +34,20 @@ ip_address = "34.28.215.5"
 @home_bp.route('/')
 def index():
     #print("--> Loading Home Page", flush=True)
-    return render_template('/home.html', hostname = ip_address, port = 8080)
+    if pipeline is None:
+        model_status = "not_loaded"
+    else:
+        model_status = "loaded"
+    return render_template('/home.html', hostname = ip_address, port = 8080, model_status = model_status)
+
+@home_bp.route('/connect', methods=['POST'])
+def connect():
+    if pipeline is None:
+        model_status = "not_loaded"
+    else:
+        model_status = "loaded"
+    response_msg = {'message': "Connected", "model_status" : model_status }
+    return Response(str(response_msg), status=200, mimetype='application/json')
 
 
 @home_bp.route('/execute_query', methods=['POST'])
@@ -67,28 +80,29 @@ def load_model():
             torch_dtype=torch.float16,
             device_map="auto"
         )
-        response_msg = {'message': 'Model Loaded Successfully' }
+        model_status = "loaded"
+        response_msg = {'message': "Model Loaded Successfully", "model_status" : model_status }
         return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}" }
+        model_status = "not_loaded"
+        response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}", "model_status" : model_status }
         return Response(str(response_msg), status=500, mimetype='application/json')
-
-
-@home_bp.route('/connect', methods=['POST'])
-def connect():
-    return Response("Connected!", status=200, mimetype='application/json')
 
 
 @home_bp.route('/list_models', methods=['GET'])
 def list_models():
     global models
-    
+    if pipeline is None:
+        model_status = "not_loaded"
+    else:
+        model_status = "loaded"
     try:
         f = open('/app/client/home/models.json')
         models = json.load(f)
-        return Response(str(models), status=200, mimetype='application/json')
+        response_msg = {'models': models, "model_status" : model_status }
+        return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}" }
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}", "model_status" : model_status }
         return Response(str(response_msg), status=500, mimetype='application/json')
 
 
