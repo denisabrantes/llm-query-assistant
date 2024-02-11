@@ -89,7 +89,7 @@ def list_models():
     global models
     
     try:
-        f = open('models.json')
+        f = open('/app/client/home/models.json')
         models = json.load(f)
         return Response(str(models), status=200, mimetype='application/json')
     except Exception as ex:
@@ -102,7 +102,7 @@ def list_datasets():
     global datasets
     
     try:
-        f = open('datasets.json')
+        f = open('/app/client/home/datasets.json')
         datasets = json.load(f)
         return Response(str(datasets), status=200, mimetype='application/json')
     except Exception as ex:
