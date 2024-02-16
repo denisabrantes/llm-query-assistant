@@ -33,6 +33,8 @@ ip_address = "34.66.149.119"
 
 @home_bp.route('/')
 def index():
+    global pipeline
+    global tokenizer    
     #print("--> Loading Home Page", flush=True)
     if pipeline is None:
         model_status = "not_loaded"
@@ -43,6 +45,8 @@ def index():
 
 @home_bp.route('/connect', methods=['POST'])
 def connect():
+    global pipeline
+    global tokenizer    
     if pipeline is None:
         model_status = "not_loaded"
     else:
