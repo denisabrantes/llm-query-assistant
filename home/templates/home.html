@@ -41,7 +41,6 @@
         <br>Please Wait<br>
     </div>
 
-
     <div id="loading_model" class="note note-success successmessage loadingpanel" style="display:none;">
         <div class="text-center">
             <i class="la la-spinner text-primary la-spin progress-icon-spin"></i>
@@ -50,7 +49,15 @@
         <br>Please Wait<br>
     </div>
 
+    <div id="asking_question" class="note note-success successmessage loadingpanel" style="display:none;">
+        <div class="text-center">
+            <i class="la la-spinner text-primary la-spin progress-icon-spin"></i>
+        </div>
+        <strong>Our AI Overlords are carefully considering your question...</strong>
+        <br>Please Wait<br>
+    </div>
 
+        
 
     <div class="page-wrapper">
         <!-- Top Bar Start -->
@@ -230,7 +237,7 @@
             update_modelstatus();
         });   
 
-        function update_modelstatus(modelLooaded) {
+        function update_modelstatus(modelLoaded) {
             if(modelLoaded) { document.getElementById("modelstatus").innerHTML = model_loaded; }
             else {document.getElementById("modelstatus").innerHTML = model_notloaded; }
         }
@@ -273,7 +280,7 @@
                     for (var x = 0; x < model_list.length; x++) 
                     {
                         var thisModel = model_list[x];
-                        htmlcontent += "  <option value='" + thisModel.name +  "'>" + thisModel.name + " </option> \n";
+                        htmlcontent += "  <option value='" + thisModel.id +  "'>" + thisModel.name + " </option> \n";
                     }
                     htmlcontent += "</select> \n";                    
                 }
@@ -328,10 +335,10 @@
 
         function load_model() {
             var e = document.getElementById("model");
-            var model_name = e.value;
-            console.log("--> Loading Model: " + model_name);
+            var model_id = e.value;
+            console.log("--> Loading Model: " + model_id);
 
-            var data = 'model_name=' + model_name;
+            var data = 'model_id=' + model_id;
 
             // Show Loading Panel
             $("#loading_model").show();
@@ -356,43 +363,82 @@
             }
         }
 
+        function get_table(table_name) {
+            var selected_table = "";
+            var orders_table = "";
+            orders_table += "    SQL table: CREATE TABLE public.orders ( \n";
+            orders_table += "                order_id int2 NOT NULL, \n";
+            orders_table += "                customer_id varchar(5) NULL, \n";
+            orders_table += "                employee_id int2 NULL, \n";
+            orders_table += "                order_date date NULL, \n";
+            orders_table += "                required_date date NULL, \n";
+            orders_table += "                shipped_date date NULL, \n";
+            orders_table += "                ship_via int2 NULL, \n";
+            orders_table += "                freight float4 NULL, \n";
+            orders_table += "                ship_name varchar(40) NULL, \n";
+            orders_table += "                ship_address varchar(60) NULL, \n";
+            orders_table += "                ship_city varchar(15) NULL, \n";
+            orders_table += "                ship_region varchar(15) NULL, \n";
+            orders_table += "                ship_postal_code varchar(10) NULL, \n";
+            orders_table += "                ship_country varchar(15) NULL, \n";
+            orders_table += "                CONSTRAINT pk_orders PRIMARY KEY (order_id) \n";
+            orders_table += "                ) \n";
+            orders_table += "    SQL query: [/INST]<|im_start|>assistant \n";
+            
+            if(table_name == "orders") { selected_table = orders_table; }
+            
+            return selected_table;
+
+        }
+
         function submitQuestion() {
             var e = document.getElementById("question");
             var question = e.value;
-            console.log("--> Asking Question: " + question);
 
+            var m = document.getElementById("model");
+            var model_name = m.value; 
+            
+            // STEP 1 - GENERATE PROMPT
+            var prompt = "";
+            prompt += "<s>[INST] <<SYS>> \n";
+            prompt += "    You are a helpful programmer assistant that excels at SQL.  \n";
+            prompt += "    When prompted with a task and a definition of an SQL table, you respond with a SQL query to retrieve information from the table.  \n";
+            prompt += "    Don't explain your reasoning, only provide the SQL query. \n";
+            prompt += "    <</SYS>> \n";
+            prompt += " \n";
+            prompt += "    Task: " + prompt + " \n";
+            prompt += get_table("orders");
+            prompt += " \n";
+            
+            console.log("--> Original Question: " + question);
+            console.log("--> Prompt: " + prompt)
+            
+            var data = 'model' + model_name + 'prompt=' + prompt;
+
+            // Refresh Prompt Panel
+            document.getElementById("prompt").innerHTML = prompt;
+
+            console.log("--> Model: " + model_name + " | Prompt: " + prompt);
+            
             // Show Loading Panel
-            $("#loading_model").show();
+            $("#asking_question").show();
 
             let request = new XMLHttpRequest();
-            request.open("POST", "http://{{hostname}}:{{port}}/load_model");
+            request.open("POST", "http://{{hostname}}:{{port}}/question");
             request.setRequestHeader("Content-type", "application/json");
-            request.send();
+            request.send(data);
             request.onload = () => {
                 var response = request.response;
-                var payload = response.replace(/'/g, '"')
-                console.log("--> Response: " + payload);                
-                var responseMsg = JSON.parse(payload);
-                var htmlcontent = "";
-                if (responseMsg.length === 0) {
-                    htmlcontent += "No Datasets Found";
-                }
-                else {
-                    htmlcontent += "<select id='dataset' name='dataset' class='form-control'> \n";
-                    for (var x = 0; x < responseMsg.length; x++) 
-                    {
-                        var thisDS = responseMsg[x];
-                        htmlcontent += "  <option value='" + thisDS.name +  "'>" + thisDS.name + " </option> \n";
-                    }
-                    htmlcontent += "</select> \n";                    
-                }
-                document.getElementById("dataset_list_select_div").innerHTML = htmlcontent;
-            }
+                var payloadr = response.replace(/'/g, '"')
+                console.log("--> Response: " + payloadr);
+                var responseMsg = JSON.parse(payloadr);
+                message = responseMsg["response"];
+                document.getElementById("answer").innerHTML = message;
 
-            // Hide Loading Panel
-            $("#loading_dataset_list").hide();            
-
+                 // Hide Loading Panel
+                $("#asking_question").hide();
         }
+    }
 
         
 

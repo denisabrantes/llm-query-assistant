@@ -40,6 +40,7 @@ def index():
         model_status = "loaded"
     return render_template('/home.html', hostname = ip_address, port = 8080, model_status = model_status)
 
+
 @home_bp.route('/connect', methods=['POST'])
 def connect():
     if pipeline is None:
@@ -70,21 +71,28 @@ def execute_query():
 @home_bp.route('/load_model', methods=['POST'])
 def load_model():
     global pipeline
-    global tokenizer  
-    model_name = request.values.get('model_name')  
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        pipeline = transformers.pipeline(
-            "text-generation",
-            model=model_name,
-            torch_dtype=torch.float16,
-            device_map="auto"
-        )
-        response_msg = {'message': "Model Loaded Successfully", "model_status" : "loaded" }
-        return Response(str(response_msg), status=200, mimetype='application/json')
-    except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}", "model_status" : "not_loaded" }
-        return Response(str(response_msg), status=500, mimetype='application/json')
+    global tokenizer
+    isLocalModel = False
+
+    model_name = request.values.get('model_id')
+    if "local" in model_name:
+        model_name = "TinyLlama/TinyLlama-1.1B-Chat-v0.4" 
+        isLocalModel = True
+
+    if isLocalModel:
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            pipeline = transformers.pipeline(
+                "text-generation",
+                model=model_name,
+                torch_dtype=torch.float16,
+                device_map="auto"
+            )
+            response_msg = {'message': "Model Loaded Successfully", "model_status" : "loaded" }
+            return Response(str(response_msg), status=200, mimetype='application/json')
+        except Exception as ex:
+            response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}", "model_status" : "not_loaded" }
+            return Response(str(response_msg), status=500, mimetype='application/json')
 
 
 @home_bp.route('/list_models', methods=['GET'])
@@ -116,3 +124,36 @@ def list_datasets():
         response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}" }
         return Response(str(response_msg), status=500, mimetype='application/json')
 
+
+@home_bp.route('/question', methods=['POST'])
+def answer_question():
+    global pipeline
+    global tokenizer
+    
+    try:
+        eos_token_id = tokenizer.get_vocab()[EOS_TOKEN]
+        prompt = request.values.get('prompt')
+        model_id = request.values.get('model')
+
+        if "local" in model_id:
+            try:
+                sequences = pipeline(
+                    prompt,
+                    do_sample=True,
+                    top_k=50,
+                    top_p = 0.9,
+                    num_return_sequences=1,
+                    repetition_penalty=1.1,
+                    max_new_tokens=1024,
+                    eos_token_id=eos_token_id,
+                )
+                seq = sequences[0]
+                response_msg = {'response': seq['generated_text'] }
+                return Response(str(response_msg), status=200, mimetype='application/json')
+            except Exception as ex:
+                response_msg = {'message': f"FAILED TO GENERATE PREDICTION: {ex}"}
+                return Response(str(response_msg), status=500, mimetype='application/json')
+
+    except Exception as ex:
+        response_msg = {'message': f"FAILED TO LOAD MODEL FOR PREDICTION: {ex}"}
+        return Response(str(response_msg), status=500, mimetype='application/json')
