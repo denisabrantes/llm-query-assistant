@@ -27,7 +27,7 @@ import google.auth.transport.requests
 
 from . import home_bp
 
-pipeline, tokenizer, models, datasets = None, None, None, None
+#pipeline, tokenizer, models, datasets = None, None, None, None
 
 ip_address = "34.66.149.119"
 
@@ -88,7 +88,7 @@ def load_model():
                 torch_dtype=torch.float16,
                 device_map="auto"
             )
-            response_msg = {'message': "Model Loaded Successfully", "model_status" : "loaded" }
+            response_msg = {'message': f"Model Loaded Successfully: {model_name}", "model_status" : "loaded" }
             return Response(str(response_msg), status=200, mimetype='application/json')
         except Exception as ex:
             response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}", "model_status" : "not_loaded" }
