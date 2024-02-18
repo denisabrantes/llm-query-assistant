@@ -409,8 +409,7 @@
             prompt += " \n";
             
             console.log("--> Original Question: " + question);
-            console.log("--> Prompt: " + prompt)
-            
+           
             var data = 'model' + model_name + 'prompt=' + prompt;
 
             // Refresh Prompt Panel
@@ -423,7 +422,7 @@
 
             let request = new XMLHttpRequest();
             request.open("POST", "http://{{hostname}}:{{port}}/question");
-            request.setRequestHeader("Content-type", "application/json");
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             request.send(data);
             request.onload = () => {
                 var response = request.response;

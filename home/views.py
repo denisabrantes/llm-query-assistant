@@ -42,7 +42,7 @@ def get_model_list():
         print(f"--> FAILED TO LIST MODELS: {ex}")
 
 def get_model_type(model_name):
-    model_type = ""
+    model_type = None
     model_list = get_model_list()
     for model in model_list:
         if model_name == model['name']:
@@ -122,36 +122,36 @@ def list_datasets():
 
 @home_bp.route('/question', methods=['POST'])
 def answer_question():
+    try:
+        tokenizer = cache.get("tokenizer")
+        pipeline = cache.get("pipeline")
+        eos_token_id = tokenizer.get_vocab()[EOS_TOKEN]
+
+        model_name = request.values.get('model')
+        model_type = get_model_type(model_name)        
+        prompt = request.values.get('prompt')
+        printout(f"--> Model Name: {model_name} | Model Type: {model_type} | prompt: {prompt}")
+
+        if "hf" in model_type:
             try:
-                tokenizer = cache.get("tokenizer")
-                pipeline = cache.get("pipeline")
-
-                eos_token_id = tokenizer.get_vocab()[EOS_TOKEN]
-                prompt = request.values.get('prompt')
-                model_name = request.values.get('model')
-                model_type = get_model_type(model_name)
-                printout(f"--> Model Name: {model_name} | Model Type: {model_type}")
-
-                if "hf" in model_type:
-                    try:
-                        sequences = pipeline(
-                            prompt,
-                            do_sample=True,
-                            top_k=50,
-                            top_p = 0.9,
-                            num_return_sequences=1,
-                            repetition_penalty=1.1,
-                            max_new_tokens=1024,
-                            eos_token_id=eos_token_id,
-                        )
-                        seq = sequences[0]
-                        response_msg = {'response': seq['generated_text'] }
-                        return Response(str(response_msg), status=200, mimetype='application/json')
-                    except Exception as ex:
-                        response_msg = format_failure_message(ex, "GENERATE PREDICTION")
-                        return Response(str(response_msg), status=500, mimetype='application/json')
-
+                sequences = pipeline(
+                    prompt,
+                    do_sample=True,
+                    top_k=50,
+                    top_p = 0.9,
+                    num_return_sequences=1,
+                    repetition_penalty=1.1,
+                    max_new_tokens=1024,
+                    eos_token_id=eos_token_id,
+                )
+                seq = sequences[0]
+                response_msg = {'response': seq['generated_text'] }
+                return Response(str(response_msg), status=200, mimetype='application/json')
             except Exception as ex:
-                printout(ex)
-                response_msg = format_failure_message(ex, "LOAD MODEL FOR PREDICTION")
+                response_msg = format_failure_message(ex, "GENERATE PREDICTION")
                 return Response(str(response_msg), status=500, mimetype='application/json')
+
+    except Exception as ex:
+        printout(ex)
+        response_msg = format_failure_message(ex, "LOAD MODEL FOR PREDICTION")
+        return Response(str(response_msg), status=500, mimetype='application/json')
