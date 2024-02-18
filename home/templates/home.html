@@ -57,7 +57,6 @@
         <br>Please Wait<br>
     </div>
 
-        
 
     <div class="page-wrapper">
         <!-- Top Bar Start -->
@@ -208,38 +207,38 @@
         </div>
 
 
-
-        <!-- jQuery  -->
-        <script src="./assets/js/jquery.min.js"></script>
-        <script src="./assets/js/bootstrap.bundle.min.js"></script>
-        <script src="./assets/js/metismenu.min.js"></script>
-        <script src="./assets/js/waves.js"></script>
-        <script src="./assets/js/feather.min.js"></script>
-        <script src="./assets/js/simplebar.min.js"></script>
-        <script src="./assets/js/moment.js"></script>
-        <script src="./assets/js/app.js"></script>
-        <script src="./assets/plugins/jquery-steps/jquery.steps.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js"></script>
-
-        <script src="./assets/plugins/dropify/js/dropify.min.js"></script>
-     
-
-        <script type="text/javascript">
+    <!-- jQuery  -->
+    <script src="./assets/js/jquery.min.js"></script>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/js/metismenu.min.js"></script>
+    <script src="./assets/js/waves.js"></script>
+    <script src="./assets/js/feather.min.js"></script>
+    <script src="./assets/js/simplebar.min.js"></script>
+    <script src="./assets/js/moment.js"></script>
+    <script src="./assets/js/app.js"></script>
+    <script src="./assets/plugins/jquery-steps/jquery.steps.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js"></script>
+    <script src="./assets/plugins/dropify/js/dropify.min.js"></script>
+    
+    <script type="text/javascript">
         
         var model_notloaded = "<span style='color:red;'>Not Loaded</span>";
         var model_loaded = "<span style='color:green;'>Loaded</span>";
-        var modelLoaded = false;
+        var active_model = "None";
 
         $(document).ready(function() {
             console.log("page loaded");
             getModelList();
             getDatasetList();
-            update_modelstatus();
         });   
 
-        function update_modelstatus(modelLoaded) {
-            if(modelLoaded) { document.getElementById("modelstatus").innerHTML = model_loaded; }
-            else {document.getElementById("modelstatus").innerHTML = model_notloaded; }
+        function update_modelstatus() {
+            var e = document.getElementById("model");
+            var selected_model = e.value;
+            if (selected_model == active_model) { 
+                document.getElementById("modelstatus").innerHTML = model_loaded;
+            }
+            else { document.getElementById("modelstatus").innerHTML = model_notloaded; }
         }
 
         function connect() {
@@ -280,16 +279,16 @@
                     for (var x = 0; x < model_list.length; x++) 
                     {
                         var thisModel = model_list[x];
-                        htmlcontent += "  <option value='" + thisModel.id +  "'>" + thisModel.name + " </option> \n";
+                        htmlcontent += "  <option value='" + thisModel.name +  "'>" + thisModel.name + " </option> \n";
+                        if (thisModel.active) { 
+                            console.log("--> Active Model: " + thisModel.name);
+                            active_model = thisModel.name;
+                        }
                     }
                     htmlcontent += "</select> \n";                    
                 }
                 document.getElementById("model_list_select_div").innerHTML = htmlcontent;
-                var model_status = responseMsg["model_status"];
-                console.log("--> Model Status: " + model_status)
-                if (model_status == "loaded") { modelLoaded = true; }
-                else { modelLooaded = false; }
-                update_modelstatus(modelLooaded);
+                update_modelstatus();
             }
 
             // Hide Loading Panel
@@ -355,11 +354,10 @@
                 message = responseMsg["message"];
                  // Hide Loading Panel
                 $("#loading_model").hide();
-                var model_status = responseMsg["model_status"];
-                console.log("--> Model Status: " + model_status)
-                if (model_status == "loaded") { modelLoaded = true; }
-                else { modelLoaded = false; }
-                update_modelstatus(modelLoaded);
+                if (request.status == 200) {
+                        active_model = model_id;
+                        update_modelstatus();
+                }
             }
         }
 
@@ -439,10 +437,6 @@
                 $("#asking_question").hide();
         }
     }
-
-        
-
-
 
         // dropify js        
         $(function () {
