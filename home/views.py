@@ -27,6 +27,8 @@ from . import home_bp
 
 ip_address = "34.66.149.119"
 
+def printout(message):
+    print(message, flush=True)
 
 def get_model_list():
     try:
@@ -36,15 +38,16 @@ def get_model_list():
         print(f"--> FAILED TO LIST MODELS: {ex}")
 
 def get_model_type(model_name):
+    model_type = ""
     model_list = get_model_list()
     for model in model_list:
-        if model['name'] == model_name:
+        if model_name in model['name']:
             model_type = model['type']    
     return model_type
 
 @home_bp.route('/')
 def index():
-    print("--> Loading Home Page", flush=True)
+    printout("--> Loading Home Page")
     return render_template('/home.html', hostname = ip_address, port = 8080)
 
 @home_bp.route('/connect', methods=['POST'])
@@ -90,7 +93,7 @@ def load_model():
             response_msg = {'message': f"Model Loaded Successfully: {model_name}"}
             return Response(str(response_msg), status=200, mimetype='application/json')
         except Exception as ex:
-            response_msg = {'message': f"FAILED TO LOAD MODEL: {ex}"}
+            response_msg = {'message': f"FAILED TO LOAD MODEL: {ex.replace("\"","'")} "}
             return Response(str(response_msg), status=500, mimetype='application/json')
 
 @home_bp.route('/list_models', methods=['GET'])
@@ -100,7 +103,7 @@ def list_models():
         response_msg = {'models': models}
         return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}"}
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex.replace("\"","'")} "}
         return Response(str(response_msg), status=500, mimetype='application/json')
 
 @home_bp.route('/list_datasets', methods=['GET'])
@@ -110,7 +113,7 @@ def list_datasets():
         datasets = json.load(f)
         return Response(str(datasets), status=200, mimetype='application/json')
     except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex}" }
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex.replace("\"","'")}" }
         return Response(str(response_msg), status=500, mimetype='application/json')
 
 @home_bp.route('/question', methods=['POST'])
@@ -140,9 +143,9 @@ def answer_question():
                         response_msg = {'response': seq['generated_text'] }
                         return Response(str(response_msg), status=200, mimetype='application/json')
                     except Exception as ex:
-                        response_msg = {'message': f"FAILED TO GENERATE PREDICTION: {ex}"}
+                        response_msg = {'message': f"FAILED TO GENERATE PREDICTION: {ex.replace("\"","'")}"}
                         return Response(str(response_msg), status=500, mimetype='application/json')
 
             except Exception as ex:
-                response_msg = {'message': f"FAILED TO LOAD MODEL FOR PREDICTION: {ex}"}
+                response_msg = {'message': f"FAILED TO LOAD MODEL FOR PREDICTION: {ex.replace("\"","'"}"}
                 return Response(str(response_msg), status=500, mimetype='application/json')

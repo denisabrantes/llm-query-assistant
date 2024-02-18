@@ -170,7 +170,7 @@
                                                         <div class="form-group row col-md-9">
                                                             <div class="col-lg-9">
                                                                 <label for="prompt" class="form-label">The Prompt</label>
-                                                                <textarea id="prompt" name="prompt" type="textarea" class="form-control" rows="15" style="width:700px;" readonly></textarea>
+                                                                <textarea id="prompt" name="prompt" type="textarea" class="form-control" rows="15" style="width:700px; font-family: monospace;" readonly></textarea>
                                                             </div>
                                                         </div><!--end form-group-->
                                                     </div>
@@ -180,7 +180,7 @@
                                                         <div class="form-group row col-md-9">
                                                             <div class="col-lg-9">
                                                                 <label for="answer" class="form-label">The Answer:</label>
-                                                                <textarea id="answer" name="answer" type="textarea" class="form-control" rows="15" style="width:700px;" readonly></textarea>
+                                                                <textarea id="answer" name="answer" type="textarea" class="form-control" rows="15" style="width:700px; font-family: monospace;" readonly></textarea>
                                                             </div>
                                                         </div><!--end form-group-->
                                                     </div>
@@ -404,7 +404,7 @@
             prompt += "    Don't explain your reasoning, only provide the SQL query. \n";
             prompt += "    <</SYS>> \n";
             prompt += " \n";
-            prompt += "    Task: " + prompt + " \n";
+            prompt += "    Task: " + question + " \n";
             prompt += get_table("orders");
             prompt += " \n";
             
