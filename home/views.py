@@ -45,7 +45,7 @@ def get_model_type(model_name):
     model_type = ""
     model_list = get_model_list()
     for model in model_list:
-        if model_name in model['name']:
+        if model_name == model['name']:
             model_type = model['type']    
     return model_type
 
@@ -130,6 +130,7 @@ def answer_question():
                 prompt = request.values.get('prompt')
                 model_name = request.values.get('model')
                 model_type = get_model_type(model_name)
+                printout(f"--> Model Name: {model_name} | Model Type: {model_type}")
 
                 if "hf" in model_type:
                     try:
