@@ -151,5 +151,6 @@ def answer_question():
                         return Response(str(response_msg), status=500, mimetype='application/json')
 
             except Exception as ex:
+                printout(ex)
                 response_msg = format_failure_message(ex, "LOAD MODEL FOR PREDICTION")
                 return Response(str(response_msg), status=500, mimetype='application/json')
