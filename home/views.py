@@ -31,7 +31,7 @@ def printout(message):
     print(message, flush=True)
 
 def format_failure_message(ex, message):
-    cl_ex = ex.replace("\"", "'")
+    cl_ex = str(ex).replace("\"", "'")
     return {"message": f"FAILED TO {message} : {cl_ex}"}
 
 def get_model_list():
