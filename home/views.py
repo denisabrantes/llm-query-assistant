@@ -93,7 +93,7 @@ def load_model():
             response_msg = {'message': f"Model Loaded Successfully: {model_name}"}
             return Response(str(response_msg), status=200, mimetype='application/json')
         except Exception as ex:
-            response_msg = {'message': f"FAILED TO LOAD MODEL: {ex.replace('"',"'")} "}
+            response_msg = {'message': f"FAILED TO LOAD MODEL: {ex.replace('"','\'')} "}
             return Response(str(response_msg), status=500, mimetype='application/json')
 
 @home_bp.route('/list_models', methods=['GET'])
@@ -103,7 +103,7 @@ def list_models():
         response_msg = {'models': models}
         return Response(str(response_msg), status=200, mimetype='application/json')
     except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex.replace('"',"'")} "}
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex.replace('"','\'')} "}
         return Response(str(response_msg), status=500, mimetype='application/json')
 
 @home_bp.route('/list_datasets', methods=['GET'])
@@ -113,7 +113,7 @@ def list_datasets():
         datasets = json.load(f)
         return Response(str(datasets), status=200, mimetype='application/json')
     except Exception as ex:
-        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex.replace('"',"'")} "}
+        response_msg = {'message': f"FAILED TO LOAD MODEL LIST: {ex.replace('"','\'')} "}
         return Response(str(response_msg), status=500, mimetype='application/json')
 
 @home_bp.route('/question', methods=['POST'])
@@ -143,9 +143,9 @@ def answer_question():
                         response_msg = {'response': seq['generated_text'] }
                         return Response(str(response_msg), status=200, mimetype='application/json')
                     except Exception as ex:
-                        response_msg = {'message': f"FAILED TO GENERATE PREDICTION: {ex.replace('"',"'")} "}
+                        response_msg = {'message': f"FAILED TO GENERATE PREDICTION: {ex.replace('"','\'')} "}
                         return Response(str(response_msg), status=500, mimetype='application/json')
 
             except Exception as ex:
-                response_msg = {'message': f"FAILED TO LOAD MODEL FOR PREDICTION: {ex.replace('"',"'")} "}
+                response_msg = {'message': f"FAILED TO LOAD MODEL FOR PREDICTION: {ex.replace('"','\'')} "}
                 return Response(str(response_msg), status=500, mimetype='application/json')
