@@ -423,7 +423,7 @@
             let request = new XMLHttpRequest();
             request.open("POST", "http://{{hostname}}:{{port}}/question");
             request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            request.send(JSON.stringify(save_data));
+            request.send(JSON.stringify(data));
             request.onload = () => {
                 var response = request.response;
                 var payloadr = response.replace(/'/g, '"')
