@@ -151,7 +151,7 @@ def answer_question():
                 )
                 seq = sequences[0]
                 response_text = seq['generated_text'].replace("\"", "'").replace("''","'")
-                response_msg = {'response': response_text }
+                response_msg = {'response': response_text.replace("\"", "'") }
                 printout(f"--> MODEL RESPONSE: {seq['generated_text']}")
                 return Response(str(response_msg), status=200, mimetype='application/json')
             except Exception as ex:
