@@ -426,11 +426,11 @@
             request.send(JSON.stringify(data));
             request.onload = () => {
                 var response = request.response;
-                var payloadr = response.replace(/['"]+/g, '');
+                var payloadr = response.replace(/['"]+/g, '\'');
                 console.log("--> Response: " + payloadr);
-                var responseMsg = JSON.parse(payloadr);
-                message = responseMsg["response"];
-                document.getElementById("answer").innerHTML = message;
+                //var responseMsg = JSON.parse(payloadr);
+                //message = responseMsg["response"];
+                document.getElementById("answer").innerHTML = payloadr;
 
                  // Hide Loading Panel
                 $("#asking_question").hide();

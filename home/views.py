@@ -153,7 +153,7 @@ def answer_question():
                 response_text = seq['generated_text'].replace('"','\\"')
                 response_msg = {'response': response_text }
                 printout(f"--> MODEL RESPONSE: {seq['generated_text']}")
-                return Response(str(response_msg), status=200, mimetype='application/json')
+                return Response(response_text, status=200, mimetype='application/json')
             except Exception as ex:
                 printout(ex)
                 response_msg = format_failure_message(ex, "GENERATE PREDICTION")
