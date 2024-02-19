@@ -127,9 +127,14 @@ def answer_question():
         pipeline = cache.get("pipeline")
         eos_token_id = tokenizer.get_vocab()[EOS_TOKEN]
 
-        model_name = request.values.get('model')
-        model_type = get_model_type(model_name)        
-        prompt = request.values.get('prompt')
+        form_data = request.json
+        model_name = form_data["model"]
+        prompt = form_data["prompt"]
+        # model_name = request.values.get('model')
+        # prompt = request.values.get('prompt')
+        
+        model_type = get_model_type(model_name)
+        
         printout(f"--> Model Name: {model_name} | Model Type: {model_type} | prompt: {prompt}")
 
         if "hf" in model_type:
