@@ -426,7 +426,7 @@
             request.send(JSON.stringify(data));
             request.onload = () => {
                 var response = request.response;
-                var payloadr = response.replace(/'/g, '"')
+                var payloadr = response.replace(/['"]+/g, '');
                 console.log("--> Response: " + payloadr);
                 var responseMsg = JSON.parse(payloadr);
                 message = responseMsg["response"];
