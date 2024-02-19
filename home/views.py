@@ -150,7 +150,8 @@ def answer_question():
                     eos_token_id=eos_token_id,
                 )
                 seq = sequences[0]
-                response_msg = {'response': seq['generated_text'] }
+                response_text = cl_ex = str(seq['generated_text']).replace("\"", "'")
+                response_msg = {'response': response_text }
                 printout(f"--> MODEL RESPONSE: {seq['generated_text']}")
                 return Response(str(response_msg), status=200, mimetype='application/json')
             except Exception as ex:
