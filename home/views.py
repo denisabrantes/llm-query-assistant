@@ -25,7 +25,7 @@ import google.auth.transport.requests
 
 from . import home_bp
 
-ip_address = "34.66.149.119"
+ip_address = "34.72.65.1"
 
 def printout(message):
     print(message, flush=True)
@@ -135,7 +135,7 @@ def answer_question():
         
         model_type = get_model_type(model_name)
         
-        printout(f"--> Model Name: {model_name} | Model Type: {model_type} | prompt: {prompt}")
+        printout(f"--> Model Name: {model_name} | Model Type: {model_type}")# | prompt: {prompt}")
 
         if "hf" in model_type:
             try:
@@ -154,6 +154,7 @@ def answer_question():
                 printout(f"--> MODEL RESPONSE: {seq['generated_text']}")
                 return Response(str(response_msg), status=200, mimetype='application/json')
             except Exception as ex:
+                printout(ex)
                 response_msg = format_failure_message(ex, "GENERATE PREDICTION")
                 return Response(str(response_msg), status=500, mimetype='application/json')
 
