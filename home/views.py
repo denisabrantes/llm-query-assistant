@@ -25,7 +25,7 @@ import google.auth.transport.requests
 
 from . import home_bp
 
-ip_address = "34.72.65.1"
+ip_address = "35.239.202.231"
 
 def printout(message):
     print(message, flush=True)
